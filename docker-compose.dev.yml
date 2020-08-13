@@ -1,0 +1,105 @@
+#------------------------------------------------------------------------------
+#
+# 開発環境用
+#
+# usage
+# 
+# $ docker-compose -f docker-compose.dev.yml up -d  
+#
+#------------------------------------------------------------------------------
+version: "3.2"
+services:
+
+  #
+  # Frontend Webserver container
+  #
+  question-front:
+    image: node:14.3.0-stretch-slim
+    container_name: question-front
+    tty: true
+    user: node
+    volumes:
+      - ./frontend/app:/home/frontend/app
+    working_dir: /home/frontend/app
+    ports:
+      - 8080:8080
+    networks:
+      - question-webnet
+    depends_on:
+      - question-mongo
+      - question-back
+    links:
+      - question-back
+
+  #
+  # Backend Server container
+  #
+  question-back:
+    image: node:14.3.0-stretch-slim
+    container_name: question-back
+    tty: true
+    user: node
+    volumes:
+      - ./backend/app:/home/backend/app
+    working_dir: /home/backend/app
+    ports:
+      - 3000:3000
+    networks:
+      - question-webnet
+    depends_on:
+      - question-mongo
+    links:
+      - question-mongo
+
+  #
+  # MongoDB container
+  #
+  # ルート権限をもつユーザー・パスワードを登録 
+  # ($MONGO_INITDB_ROOT_USERNAME, $MONGO_INITDB_ROOT_PASSWORD)
+  # DBを作成　(DB名は${MONGO_INITDB_DATABASE)
+  #
+  # docker-compose up -d　の実行時に
+  # ./mongo/docker-entrypoint-initdb.d/init.js を実行
+  # データベースの一般ユーザー登録、初期データ搭載 
+  #
+  question-mongo:
+    image: mongo:4.2.6-bionic
+    container_name: question-mongo
+    volumes:
+      - ./mongo/data:/data/db
+      - ./mongo/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    env_file: .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    ports:
+      - 27017:27017
+    networks:
+      - question-webnet
+
+  #
+  # MongoDB GUI Client container
+  #
+  question-mongo-express:
+    image: mongo-express:0.54.0
+    container_name: question-mongo-express
+    ports:
+      - 8081:8081
+    networks:
+      - question-webnet
+    env_file: .env
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: question-mongo
+      ME_CONFIG_BASICAUTH_UERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    depends_on:
+      - question-mongo
+    links:
+      - question-mongo
+  
+networks:
+  question-webnet:
+

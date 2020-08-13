@@ -1,0 +1,5 @@
+{
+  "FRONTEND_DOMAIN" : "localhost",
+  "BACKEND_DOMAIN" : "localhost",
+  "BACKEND_PORT" : "3000"
+}
