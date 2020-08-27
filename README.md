@@ -72,10 +72,9 @@ question-frontコンテナの以下のファイルを修正してもOK
 ├── docker-compose.yml              # 本番用 
 ├── .env                            # docker-compose.yml用の環境変数定義ファイル
 ├── frontend
-│   ├── app                         # フロントエンドサーバーアプリ関連のファイル
+│   └── app                         # フロントエンドサーバーアプリ関連のファイル
 └── mongo
     ├── data                        # DBのデータ
     └── docker-entrypoint-initdb.d  # DBの初期設定スクリプトファイル
 ```
-
 

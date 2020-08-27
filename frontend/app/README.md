@@ -14,7 +14,6 @@
 ├── src
 │   ├── App.vue
 │   ├── api
-│   │   ├── index.js
 │   │   └── methods.js
 │   ├── assets
 │   │   ├── blurcamera.d2d68327.jpg
