@@ -7,21 +7,39 @@
 
 <template>
   <v-card>
+    <!-- アンケート結果が非公開の場合は、アクセストークを入力させるダイアログを表示 -->
+    <v-dialog v-model='visibleInputTokenDialog'>
+      <v-card>
+        <v-card-title> アクセストークンを入力 
+        </v-card-title>
+        <v-text-field v-model='token' placeholder='トークンを貼り付けて下さい'>
+        </v-text-field>
+        <v-btn color="primary" block @click="getPrivateAnswer" > アクセス
+          <v-icon small> mdi-download </v-icon>
+        </v-btn>
+      </v-card>
+    </v-dialog>
+    <div v-if='visibleError' style="padding: 25px; text-align: center">
+      アクセスが拒否されました
+      {{ errorMessage }}
+    </div>
+    <!-- ダイアログ終了 -->
 
+    <v-card v-if=visibleAnswer>
      <!-- アンケート情報の表示 -->
      <v-card-subtitle> 
          <v-icon small> mdi-folder </v-icon>
        {{ question.title }}
          <v-icon small> mdi-account </v-icon> by {{ question.owner }}
-         <v-icon small> mdi-text </v-icon> {{ question.purpose }}
-         <v-icon small> mdi-message </v-icon> {{ question.description }}
+         <v-icon small> mdi-text </v-icon> 目的 {{ question.purpose }}
+         <v-icon small> mdi-message </v-icon> 詳細 {{ question.description }}
          <v-icon small> mdi-tag </v-icon> {{ question.tagsString }}
+         <v-icon small> mdi-key </v-icon> {{ question.isPublicAnswer? "回答は公開":"回答は非公開" }}
      </v-card-subtitle>
 
      <!-- 集計結果の表示開始 -->
      <h3 style="padding: 25px;"> 集計結果   (回答数：{{ answer.length }}件 )
      </h3>
-
 
      <!-- 個々質問と回答集計の表示 -->
      <v-card v-for="(n,index) in question.total" :key="index" style="padding: 25px;">
@@ -60,8 +78,13 @@
          </ul>
        </div>
      </v-card>
-        
 
+     <!-- ダウンロードボタン -->
+     <v-btn color="primary" block @click="download"> 回答データをダウンロードする
+       <v-icon small> mdi-download </v-icon>
+     </v-btn>
+
+    </v-card>    
  </v-card>
 </template>
 
@@ -79,14 +102,21 @@ export default {
   data: () => {
 
     return {
+      // 回答の表示コントロール
+      visibleAnswer: false,
+      // トークンインプット用のダイアログ表示コントロール
+      visibleInputTokenDialog: false,
+      // アクセストークン
+      token: "",
+      // アクセス不可の場合の表示コントロール
+      visibleError: false,
+      // アクセストークンのチェック関連エラーメッセージ
+      errorMessage: "",
 
-      // アンケートidの回答全結果を取得したresponseデータ
-      resAnswer : {},
       // アンケートidの回答全結果 Array
       answer : [],
       // アンケートidのデータ
       question : {},
-      
       // アンケートid の回答全結果を集計したデータ 表示用
       viewAs : [],
       
@@ -110,22 +140,59 @@ export default {
   
   
   created: function(){
+
+    this.getQuestion()
     // ページ作成時にデータを取得する
-     this.getQuestionById()
 
   },
   
   methods: {
 
-    // idで指定されるデータを取得する（アンケート、アンケート結果）
-   async getQuestionById(){
+   async getQuestion(){
+     // アンケートのデータ取得
+     this.question  = await Methods.getQuestionById(this.id)
+     this.question.tagsString = this.question.tags.toString()
 
-      // バックエンドサーバーからidで指定するアンケート、その回答データを取得する
-      this.question  = await Methods.getQuestionById(this.id)
-      this.question.tagsString = this.question.tags.toString()
-      this.resAnswer  = await Methods.getAnswersAll(this.id)
-      this.answer  = this.resAnswer.data
+    if(!this.question.isPublicAnswer){
+      // アンケート結果は非公開 トークンの入力へ
+      this.visibleInputTokenDialog = true
+    } else {
+      // アンケート結果は公開
+      this.getPublicAnswer()
+    }
+   },
 
+   // アンケート結果が非公開の場合の回答データ取得処理
+   //    トークンのエラー処理が異なるぐらい
+   async getPrivateAnswer(){
+     this.visibleInputTokenDialog = false
+     await Methods.getAnswersAll(this.id, this.token)
+       .then((response) => {
+         this.answer  = response
+         this.visibleAnswer = true
+       })
+       .catch((err) => {
+         this.visibleError = true
+         this.errorMessage = err
+       })
+     if(!this.visibleError){
+       this.setViewAs()
+     }
+   },
+
+   // アンケート結果が公開の場合の回答データ取得処理
+   async getPublicAnswer(){
+     this.token = ""
+     this.answer  = await Methods.getAnswersAll(this.id, this.token)
+     this.visibleAnswer = true
+     this.setViewAs()
+   },
+
+   // 結果の集計表示用のデータ作成処理
+   setViewAs(){
+      if(this.answer.length == 0){
+        return
+      }
 
       // 回答の表示用集約データの作成
       this.viewAs = [] 
@@ -146,7 +213,25 @@ export default {
           this.viewAs.push( this.toCountDict(multiAnswer2,this.question.items[i].choiceItems.map((e1) => e1.text)) )
         }
       }
+   },
 
+    // 該当のアンケートデータをダウンロード
+    async download() {
+      const filename = "answers.json"
+      const data = JSON.stringify(this.answer) 
+      if(window.navigator.msSaveOrOpenBolb){
+        // for IE
+        window.navigator.msSaveOrOpenBlob(data, filename)
+      } else {
+        // for chrome, firefox
+        const url = URL.createObjectURL(new Blob([data], {type: "text/json"}));
+        const linkEl = document.createElement('a')
+        linkEl.href = url
+        linkEl.setAttribute('download', filename)
+        document.body.appendChild(linkEl)
+        linkEl.click()
+        URL.revokeObjectURL(url)
+      }
     },
 
     // keyの出現回数をカウントする
@@ -157,8 +242,6 @@ export default {
       }
       return dict
     },
-
-
 
     // マークダウンテキストをHTMLへ変換
     convertMarkdownToHTML(text){

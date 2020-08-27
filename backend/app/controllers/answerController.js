@@ -1,4 +1,3 @@
-const express = require('express')
 const QuestionModel = require('../models/question.js')
 const AnswerModel = require('../models/answer.js')
 

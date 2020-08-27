@@ -35,6 +35,9 @@ const QuestionSchema = new mongoose.Schema(
    // タグ
    tags : [ { type : String } ] ,
 
+   // 回答データを公開するか
+   isPublicAnswer : { type: Boolean, default : false },
+
    // 質問総数
    total : { type : Number, default : 0},
 

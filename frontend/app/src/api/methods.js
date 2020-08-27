@@ -1,4 +1,8 @@
-import Api from './index'
+// network methods
+import axios from 'axios'
+import CONF from '../config.json'
+
+const baseURL = "http://" + CONF.BACKEND_DOMAIN + ":" + CONF.BACKEND_PORT 
 
 export default {
   /**
@@ -7,11 +11,11 @@ export default {
    *         
    */
   async getQuestionById (id) {
-    
-    let response = await Api().get('/api/questions/' + id)
-    let data = response.data
-     
-    return data
+    const response = await axios({
+      method: 'get',
+      url: baseURL + '/api/questions/' + id
+    })
+    return response.data
   },
   /**
    * backend-server からアンケートの一覧を取得する
@@ -19,9 +23,11 @@ export default {
    *         
    */
   async getQuestionsList () {
-    let response = await Api().get('/api/questionsList')
-    let list = response.data
-    return list
+    const response = await axios({
+      method: 'get',
+      url: baseURL + '/api/questionsList'
+    })
+    return response.data
   },
 
   /**
@@ -30,8 +36,12 @@ export default {
    *         
    */
   async postAnswer (id, postData) {
-    let response = await Api().post('/api/questions/' + id + "/answers", postData)
-    return response
+    const response = await axios({
+      method: 'post',
+      url: baseURL + '/api/questions/' + id + '/answers',
+      data: postData
+    })
+    return response.data
   },
   /**
    * backend-server からアンケート結果を取得する
@@ -39,9 +49,13 @@ export default {
    * (backend-server)/api/questions/:id/answers/all GETリクエストの仕様を確認すること
    *         
    */
-  async getAnswersAll (id) {
-    let response = await Api().get('/api/questions/' + id + '/answers/all' )
-    return response
+  async getAnswersAll (id, token) {
+    const response = await axios({
+      method: 'get',
+      url: baseURL + "/api/questions/" + id + "/answers/all",
+      headers: { 'Authorization': 'Bearer '+ token},
+    })
+    return response.data
   },
   /**
    * backend-server へアンケートを新規登録する
@@ -49,7 +63,13 @@ export default {
    *         
    */
   async postQuestion (data) {
-    let response = await Api().post('/api/createQuestion/', data)
-    return response
+    const response = await axios({
+      method: 'post',
+      url: baseURL + '/api/createQuestion/', 
+      data: data
+    })
+    return response.data
   },
 }
+
+

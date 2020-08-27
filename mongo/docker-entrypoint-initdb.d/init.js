@@ -29,10 +29,11 @@ db.questions.insertMany(
         "total": 3,
         "status": "実施中",
         "answerCounter": 0,
-        "title": "6/1ランチ会事前アンケート",
+        "title": "【サンプル】6/1ランチ会事前アンケート",
         "owner": "usr01",
         "purpose": "参加者に配るお弁当などの希望を把握",
         "description": "6/1 12:15-12:50 @いつもの場所　「COBOユーザー会」",
+        "isPublicAnswer": true,
         "items": [
             {
                 "questionIndex": 1,
@@ -96,10 +97,11 @@ db.questions.insertMany(
         "total": 5,
         "status": "実施中",
         "answerCounter": 0,
-        "title": "6/1ランチ会事後アンケート",
+        "title": "【サンプル】6/1ランチ会事後アンケート",
         "owner": "usr01",
         "purpose": "COBOの利用状況と満足度の定期把握",
-        "description": "締切　6/14まで",
+        "description": "token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJxdWVzdGlvbklkIjoiNWYyNmM0MGZlZTliZDNlMWRhMDQxYjNiIiwiaWF0IjoxNTk4NDM0MDc5fQ.nvLtX0XdFZBGKU5OFMp-1fzsPGY0lOMnhDD_1qB1DhQ",
+        "isPublicAnswer": false,
         "items": [
             {
                 "questionIndex": 1,
@@ -215,10 +217,11 @@ db.questions.insertMany(
         "total": 3,
         "status": "実施中",
         "answerCounter": 0,
-        "title": "NITUBE　初回利用者アンケート",
+        "title": "【サンプル】NITUBE　初回利用者アンケート",
         "owner": "usr02",
         "purpose": "初回リリース後のユーザーの感想を把握",
         "description": "6/14までに回答にご協力おねがいします",
+        "isPublicAnswer": true,
         "items": [
             {
                 "questionIndex": 1,
@@ -286,10 +289,11 @@ db.questions.insertMany(
         "total": 3,
         "status": "実施中",
         "answerCounter": 0,
-        "title": "クイズ",
+        "title": "【サンプル】クイズ",
         "owner": "usr03",
         "purpose": "ひまつぶし",
         "description": "省略",
+        "isPublicAnswer": true,
         "items": [
             {
                 "questionIndex": 1,
@@ -365,10 +369,11 @@ db.questions.insertMany(
     total: 1,
     status: '実施中',
     answerCounter: 0,
-    title: 'オンライン勉強会　日程調整！',
+    title: '【サンプル】オンライン勉強会　日程調整！',
     owner: 'usr01',
     purpose: '日程調整',
     description: '省略',
+    isPublicAnswer: true,
     items: [
         {
             questionIndex: 1,

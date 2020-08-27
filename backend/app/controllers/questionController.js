@@ -1,4 +1,3 @@
-// const express = require('express')
 const QuestionModel = require('../models/question.js')
 
 
@@ -14,7 +13,7 @@ module.exports =  {
 
     QuestionModel.find(
       { }, 
-      '_id title total status answerCounter',
+      '_id title total status answerCounter isPublicAnswer',
       { sort : { update : -1 }},
       (err, result) => {
         if(!err){
@@ -60,7 +59,11 @@ module.exports =  {
 
     postData.save((err, result) => {
       if(!err){
-        res.send(result)
+        // res.send(result)
+        req.questionId = result._id
+        console.log("set req.questionId :"+ req.questionId)
+        console.log("req.body.isPublicAnswer :"+ req.body.isPublicAnswer)
+        next()
       } else {
         console.log(err)
         return res.status(500).send('post question faild.')

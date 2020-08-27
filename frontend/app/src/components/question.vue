@@ -17,9 +17,10 @@
          <v-icon small> mdi-folder </v-icon>
        {{ question.title }}
          <v-icon small> mdi-account </v-icon> by {{ question.owner }}
-         <v-icon small> mdi-text </v-icon> {{ question.purpose }}
-         <v-icon small> mdi-message </v-icon> {{ question.description }}
+         <v-icon small> mdi-text </v-icon> 目的 {{ question.purpose }}
+         <v-icon small> mdi-message </v-icon> 詳細 {{ question.description }}
          <v-icon small> mdi-tag </v-icon> {{ question.tagsString }}
+         <v-icon small> mdi-key </v-icon> {{ question.isPublicAnswer? "回答は公開": "回答は非公開" }}
      </v-card-subtitle>
 
   <!-- 問題表示部分 開始------------------------------------------------------>

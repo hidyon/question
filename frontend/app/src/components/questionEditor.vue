@@ -34,6 +34,9 @@
       <v-text-field label="詳細" v-model="question.description"> 
         <v-icon small slot="prepend"> mdi-message </v-icon> 
       </v-text-field>
+
+      <v-checkbox :label="`回答の開示: ${question.isPublicAnswer}`" v-model="question.isPublicAnswer"> 
+      </v-checkbox>
     </v-card>
 
     <!-- 質問部分 ------------------------------------------------------------>
@@ -135,11 +138,21 @@
       アンケートの新規登録が完了しました
     </div>
     <div style="padding: 25px; text-align: center">
-      回答希望者へURLを伝えましょう
+      回答用URL
+      {{ "http://"+ config.FRONTEND_DOMAIN + "/?id=" + postRes.questionId}}
     </div>
-    <div style="padding: 25px; text-align: center">
-      {{ "http://"+ config.FRONTEND_DOMAIN + "/?id=" + postRes.data._id}}
+    <div v-if='!question.isPublicAnswer' style="padding: 25px; text-align: center">
+      回答結果は非公開です。回答結果アクセス用のトークン
+      {{ postRes.token }}
+      <br >
+      <br >
+      この情報は一度しか表示されませんのでコピーして保存してください。
+
     </div>
+    <div v-if='question.isPublicAnswer' style="padding: 25px; text-align: center">
+      回答結果は公開です
+    </div>
+    
   </v-card>
 
 </div>
@@ -175,19 +188,17 @@ export default {
         owner : "",
         purpose : "",
         description : "",
+        isPublicAnswer : false,
         items : [],
         answerCounter : 0,
       },
 
       // タグのデータ（文字列型）
       tagsString : "",
-
       // 登録レスポンスデータ
       postRes : {},
-
       // 質問数
       questionCounter : 0,
-
       // 回答方式
       SINGLE : 1,     // 単回答方式
       MULTIPLE : 2,   // 複数回答方式
