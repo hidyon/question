@@ -100,7 +100,7 @@ db.questions.insertMany(
         "title": "【サンプル】6/1ランチ会事後アンケート",
         "owner": "usr01",
         "purpose": "COBOの利用状況と満足度の定期把握",
-        "description": "token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJxdWVzdGlvbklkIjoiNWYyNmM0MGZlZTliZDNlMWRhMDQxYjNiIiwiaWF0IjoxNTk4NDM0MDc5fQ.nvLtX0XdFZBGKU5OFMp-1fzsPGY0lOMnhDD_1qB1DhQ",
+        "description": "token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJxdWVzdGlvbklkIjoiNWY0N2I0MjhiYWZhYWY1ZjQ2MDEyMGU5IiwiaWF0IjoxNTk4NTM0OTQ5fQ.axvZwTu2CtqbkDxcvpIk4Ww5Ht0I2OLg3RW13E6QXcU", 
         "isPublicAnswer": false,
         "items": [
             {
